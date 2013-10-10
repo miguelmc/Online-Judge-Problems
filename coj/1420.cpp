@@ -1,18 +1,31 @@
+#include <cstdlib>
 #include <iostream>
-#include <math.h>
+
 using namespace std;
 
-int main()
-{
-    cout << (142/2^76) << endl;
-    int s, a, x, y;
+int main() {
+    long long s, a;
+    int x, y;
     while(cin >> s >> a){
-        for(x=0; x<10000;x++){
-            y = s - x;
-            if(x^y == a)
-                break;
-        }
-        cout << x << " " << y << endl;
+
+        //cout << a << " " << s << " " << (a-s) << endl;
+        if(a>s)
+            y = (a-s)/(-2);
+        else
+            y=(s-a)/(2);
+        x = s-y;
+
+        //cout << x << " " << y << " " << s << " " << a << endl;
+        if((x+y) == s && (x^y)==a)
+            if(x>y){
+                cout << y << " " << x << endl;
+            }
+            else
+                cout << y << " " << x << endl;
+        else
+            cout << -1 << endl;
     }
     return 0;
 }
+
+

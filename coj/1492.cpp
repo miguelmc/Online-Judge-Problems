@@ -3,6 +3,7 @@
 #include <iostream>
 #include <queue>
 #include <set>
+#include <map>
 #include <iomanip>
 using namespace std;
 
@@ -10,7 +11,7 @@ using namespace std;
 struct city {
     int n;
     bool mafia;
-    set<pair<int,long double> > neighbors;
+    map<int,long double > neighbors;
 
     city()
     {
@@ -21,12 +22,10 @@ struct city {
 
 struct path{
     vector<city> current;
-    int mafias;
     long double weight;
     path()
     {
-        mafias = 0;
-        weight=0;
+        weight = 0;
     }
     path(vector<city> c)
     {
@@ -39,15 +38,8 @@ struct mycomparison
 {
     bool operator() (const path* lhs, const path* rhs) const
     {
-        if(lhs->mafias < rhs->mafias)return false;
-        else if(lhs->mafias > rhs->mafias)return true;
-        else
-        {
-            if(lhs->weight < rhs->weight)
-                return false;
-            return true;
-        }
-        return false;
+        if(lhs->weight < rhs->weight)return false;
+        return true;
     }
 };
 int main()
@@ -59,7 +51,7 @@ int main()
         cin >> e >> s >> t;
         priority_queue<path*, vector<path*>,mycomparison> routes;
         set<int>visited;
-        set<pair<int,long double> >::iterator it;
+        map<int,long double>::iterator it;
         city cities[n+1];
         for(int i=1; i<=n; i++)
             cities[i].n=i;
@@ -80,22 +72,11 @@ int main()
 
         curr = new path();
         curr->current.push_back(cities[s]);
-        curr->mafias = 0;
         curr->weight = 0;
         routes.push(curr);
 
         visited.insert(cities[s].n);
 
-        /*for(int i=1; i<=n; i++)
-          {
-          cout << "Cuidad : " << cities[i].n << endl;
-          cout << "Links : " << endl;
-          for(it = cities[i].neighbors.begin(); it != cities[i].neighbors.end(); it++)
-          {
-          cout << "\t" << it->first << ": " << it->second << endl;
-          }
-          }
-          */
         while(!routes.empty())
         {
             curr = routes.top();
@@ -110,19 +91,34 @@ int main()
                     continue;
                 else
                     visited.insert(curr2->current.back().n);
-                curr2->weight = curr->weight + it->second;
-                curr2->mafias = curr->mafias + (cities[it->first].mafia ? 1 : 0);
+                curr2->weight = curr->weight/10000000 + it->second + 10000000*cities[it->first].mafia;
                 routes.push(curr2);
             }
             delete curr;
         }
 
         cout << curr->current[0].n;
-        for(int i=1; i<curr->current.size(); i++)
+        long int mafias = curr->current[0].mafia;
+        long double weight = 0.0;
+        for(int i=1; i<curr->current.size(); i++){
+            mafias += curr->current[i].mafia;
+            weight += curr->current[i-1].neighbors[curr->current[i].n];
             cout << " " << (curr->current[i].n);
+        }
         cout << endl;
-        cout << curr->mafias << " ";
-        cout << setprecision(2) << fixed << curr->weight << endl;
+        cout << mafias << " ";
+        cout << setprecision(2) << fixed << weight << endl;
+
+       /* 
+        for(int i=1; i<=n; i++)
+          {
+          cout << "Cuidad : " << cities[i].n << endl;
+          cout << "Links : " << endl;
+          for(it = cities[i].neighbors.begin(); it != cities[i].neighbors.end(); it++)
+          {
+          cout << "\t" << it->first << ": " << it->second << endl;
+          }
+          }*/
 
         while(!routes.empty()){
             delete routes.top();

@@ -1,6 +1,5 @@
 #include <cstdlib>
 #include <iostream>
-
 using namespace std;
 
 int main() {
@@ -8,6 +7,7 @@ int main() {
     int x, y;
     while(cin >> s >> a){
 
+        cout << "hola" << endl;
         //cout << a << " " << s << " " << (a-s) << endl;
         if(a>s)
             y = (a-s)/(-2);

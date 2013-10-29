@@ -4,84 +4,63 @@
 using namespace std;
 
 long long table[1005][1005];
-long long dinamic[1005][1005];
-long long solution[1005][1005];
+long long D[1005][1005];
+int n;
 
-int getThat(int i,int j)
+void show()
 {
-    if(j-i == 1)return dinamic[i][j];
-    int n=0;
-    for(int a=0; a<=i; a++)
+    for(int i=1; i<=n; i++)
     {
-        n+=dinamic[i-a][j-a];
+        for(int j=1; j<=n; j++)
+            cout << D[i][j] << " ";
+        cout << endl;
     }
-    return n;
-}
-
-int maximo(int i, int j)
-{
-    int maximo = INT_MIN;
-    for(int k=i; k<=j-1; k++)
-    {
-        maximo = max((long long)maximo, solution[i][k] + solution[k+1][j] + getThat(i, j));
-    }
-    return maximo;
+    cout << endl;
 }
 
 int main()
 {
-    int n, temp;
     cin >> n;
     while(n != 0)
     {
-        for(int i=0; i<=n+5; i++)
+        for(int i=0; i<n+5; i++)
         {
-            table[i][i] = 0;
-            dinamic[i][i] = 0;
-            solution[i][i] = 0;
-        }
-
-        for(int i=0; i<n; i++)
-            for(int j=0; j<=i; j++)
-                cin >> table[j][i];
-
-        for(int i=0; i<n; i++)
-            for(int j=i; j<n; j++)
-                dinamic[i][j + 1] = table[i][j] + dinamic[i][j];
-
-
-
-        for(int i=0; i<=n; i++)
-        {
-            for(int j=0; j<=n; j++)
-                cout << table[i][j] << "\t";
-            cout << endl;
-        }
-        cout << endl;
-        for(int i=0; i<=n; i++)
-        {
-            for(int j=0; j<=n; j++)
-                cout << dinamic[i][j] << "\t";
-            cout << endl;
-        }
-        cout << endl;
-
-        for(int diag=1; diag<=n; diag++)
-        {
-            for(int i=0; i<=n-diag; i++)
+            for(int j=0; j<n+5; j++)
             {
-                int j= i + diag;
-                cout << i << " " << j << endl;
-                solution[i][j] = maximo(i,j);
+                table[i][j] = 0;
+                D[i][j] = 0;
             }
         }
 
-        for(int i=0; i<=n; i++)
+        for(int i=1; i<=n; i++)
         {
-            for(int j=0; j<=n; j++)
-                cout << solution[i][j] << "\t";
-            cout << endl;
+            for(int j=1; j<=i; j++)
+            {
+                cin >> table[i][j];
+                D[i][j] = table[i][j];
+            }
         }
+
+        for(int j=1; j<n; j++)
+            for(int i=j; i<=n; i++)
+                D[i][j] = D[i][j] + D[i-1][j];
+
+
+        for(int j=1; j<=n; j++)
+        {
+            D[n][j] = D[n][j] + D[n-1][j-1];
+            for(int i=n-1; i>=j; i--)
+            {
+                D[i][j] = max(D[i][j] + D[i-1][j-1], D[i+1][j]);
+
+            }
+        }
+
+        long long maximum = 0;
+        for(int i=1; i<=n; i++)
+            maximum = max(maximum, D[i][i]);
+        cout << maximum << endl;
+
         cin >> n;
     }
     return 0;
